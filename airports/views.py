@@ -75,3 +75,34 @@ def calculate_distance(request):
                     'distancia_millas_nauticas': datos['data']['attributes']['nautical_miles']
                 }
                 return JsonResponse(result_data)
+            
+            elif response_post.status_code == 422:
+                return JsonResponse({
+                    'success':False,
+                    'error': 'Uno o ambos códigos de aeropuerto no son válidos.'
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Error en la API: {response_post.status_code}'
+                })
+        except requests.exceptions.Timeout:
+            return JsonResponse({
+                'success': False,
+                'error': 'Tiempo de espera agotado. Intente nuevamente más tarde.'
+            })
+        except request.exceptions.ConnectionError:
+            return JsonResponse({
+                'success': False,
+                'error': 'Error de conexión. Verifique su conexión a internet.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'succes': False,
+                'error': f'Error inesperado: {str(e)}'
+            })
+            
+    return JsonResponse({
+        'success': False,
+        'error': 'Método no permitido'
+    })
