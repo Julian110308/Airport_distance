@@ -10,6 +10,28 @@ def airport_distance_view(request):
 
 @csrf_exempt # Desactivar CSRF para simplificar las pruebas (no recomendado en producción)
 
+# Nueva vista para obtener aeropuertos de ejemplo
+def get_example_airports(request):
+    try:
+        response = requests.get('https://airportgap.com/api/airports')
+        response.raise_for_status()  # Lanza una excepción para errores HTTP
+        
+        data = response.json()
+        
+        # Extraer solo los códigos IATA de los aeropuertos
+        airports = [
+            airport['attributes']['iata']
+            for airport in data['data']
+        ]
+        
+        return JsonResponse({'success': True, 'airports': airports})
+        
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({
+            'success': False, 
+            'error': f'Error al conectar con la API: {str(e)}'
+        })
+
 # Vista para calcular la distancia entre dos aeropuertos
 def calculate_distance(request):
     if request.method == 'POST':
