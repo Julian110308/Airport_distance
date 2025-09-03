@@ -27,13 +27,13 @@ class AirportDistanceForm(forms.Form):
     )
     
     def clean_aeropuerto_origen(self): #Validar que el código contenga solo letras
-        codigo = self.cleaned_data['aeropuerto_origen'].uper()
+        codigo = self.cleaned_data['aeropuerto_origen'].upper()  # Corregido: upper() en lugar de uper()
         if not codigo.isalpha(): #Solo letras
             raise forms.ValidationError('El código IATA debe contener solo letras.')
         return codigo
     
     def clean_aeropuerto_destino(self): #Validar que el código contenga solo letras
-        codigo = self.cleaned_data['aeropuerto_destino'].uper()
+        codigo = self.cleaned_data['aeropuerto_destino'].upper()  # Corregido: upper() en lugar de uper()
         if not codigo.isalpha(): #Solo letras
             raise forms.ValidationError('El código IATA debe contener solo letras.')
-        return codigo 
+        return codigo

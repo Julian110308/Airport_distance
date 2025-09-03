@@ -4,11 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 import requests
 
-#Vsita principal que muestra el formulario
+#Vista principal que muestra el formulario
 def airport_distance_view(request):
     return render(request, 'airport_distance.html')
-
-@csrf_exempt # Desactivar CSRF para simplificar las pruebas (no recomendado en producción)
 
 # Nueva vista para obtener aeropuertos de ejemplo
 def get_example_airports(request):
@@ -32,6 +30,7 @@ def get_example_airports(request):
             'error': f'Error al conectar con la API: {str(e)}'
         })
 
+@csrf_exempt # Desactivar CSRF para simplificar las pruebas (no recomendado en producción)
 # Vista para calcular la distancia entre dos aeropuertos
 def calculate_distance(request):
     if request.method == 'POST':
@@ -40,7 +39,7 @@ def calculate_distance(request):
             aeropuerto_origen = request.POST.get('aeropuerto_origen', '').strip().upper()
             aeropuerto_destino = request.POST.get('aeropuerto_destino', '').strip().upper()
             
-            #Validar que los campos no esten vacios
+            #Validar que los campos no estén vacíos
             if not aeropuerto_origen or not aeropuerto_destino:
                 return JsonResponse({
                     'success': False,
@@ -61,7 +60,7 @@ def calculate_distance(request):
                     'error': 'Los códigos de aeropuerto no pueden ser iguales.'
                 })
             
-            #Url de la API para obtener datos del aeropuerto
+            #URL de la API para obtener datos del aeropuerto
             base_url = 'https://airportgap.com/api/airports'
             
             #Datos para el POST request
@@ -76,7 +75,7 @@ def calculate_distance(request):
             if response_post.status_code == 200:
                 datos = response_post.json()
                 
-                #Extraer informacion de la respuesta
+                #Extraer información de la respuesta
                 result_data = {
                     'success': True,
                     'codigo': datos['data']['id'],
@@ -113,14 +112,14 @@ def calculate_distance(request):
                 'success': False,
                 'error': 'Tiempo de espera agotado. Intente nuevamente más tarde.'
             })
-        except request.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError:  # Corregido: requests.exceptions en lugar de request.exceptions
             return JsonResponse({
                 'success': False,
                 'error': 'Error de conexión. Verifique su conexión a internet.'
             })
         except Exception as e:
             return JsonResponse({
-                'succes': False,
+                'success': False,  # Corregido: success en lugar de succes
                 'error': f'Error inesperado: {str(e)}'
             })
             
